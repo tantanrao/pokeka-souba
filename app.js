@@ -15,6 +15,7 @@ function showMain(tab){
     document.getElementById('main-'+t+'-section').style.display = (t===tab)?'block':'none';
   });
   document.getElementById('hero-section').style.display = (tab==='search')?'block':'none';
+  document.getElementById('trending-section').style.display = (tab==='search')?'block':'none';
 }
 
 function showRTab(tab){
@@ -24,34 +25,98 @@ function showRTab(tab){
   document.getElementById('r-era').style.display = tab==='era'?'block':'none';
 }
 
+// ── HERO BACKGROUND (real card art) ──
+async function loadHeroBg(){
+  try {
+    const names = ['Charizard','Rayquaza','Pikachu','Lugia'];
+    const promises = names.map(name =>
+      fetch(`https://api.pokemontcg.io/v2/cards?q=name:${name}&pageSize=1&orderBy=-set.releaseDate`)
+        .then(r => r.ok ? r.json() : {data:[]}).catch(() => ({data:[]}))
+    );
+    const resultsArr = await Promise.all(promises);
+    const imgs = resultsArr.map(r => r.data && r.data[0] && r.data[0].images ? r.data[0].images.small : null).filter(Boolean);
+    if(imgs.length === 0) return;
+    const classes = ['b1','b2','b3','b4'];
+    document.getElementById('hero-bg-images').innerHTML = imgs.map((src,i) =>
+      `<img class="${classes[i]||''}" src="${src}" alt="">`
+    ).join('');
+  } catch(e){ console.error('Hero bg load error:', e); }
+}
+
+// ── TRENDING CAROUSEL ──
+const trendingNames = ['Charizard','Pikachu','Mewtwo','Rayquaza','Umbreon','Gardevoir','Lugia','Eevee','Greninja','Snorlax'];
+
+async function loadTrending(){
+  const track = document.getElementById('trending-track');
+  track.innerHTML = '<div class="trending-loading">人気カードを読み込み中...</div>';
+  try {
+    const promises = trendingNames.map(name =>
+      fetch(`https://api.pokemontcg.io/v2/cards?q=name:${name}&pageSize=3&orderBy=-set.releaseDate`)
+        .then(r => r.ok ? r.json() : {data:[]})
+        .catch(() => ({data:[]}))
+    );
+    const resultsArr = await Promise.all(promises);
+    let allCards = [];
+    resultsArr.forEach(r => { if(r.data && r.data.length) allCards.push(r.data[0]); });
+
+    if(allCards.length === 0){
+      document.getElementById('trending-section').style.display = 'none';
+      return;
+    }
+
+    window._trendingCache = allCards;
+    const doubled = [...allCards, ...allCards];
+    track.innerHTML = doubled.map((c, i) => {
+      const img = c.images && c.images.small ? c.images.small : '';
+      const realIdx = i % allCards.length;
+      return `<div class="trending-card" onclick="openTrendingDetail(${realIdx})">
+        <img src="${img}" alt="${c.name}" loading="lazy">
+        <div class="trending-card-name">${c.name}</div>
+      </div>`;
+    }).join('');
+  } catch(e){
+    console.error('Trending load error:', e);
+    document.getElementById('trending-section').style.display = 'none';
+  }
+}
+
+function openTrendingDetail(idx){
+  window._searchCache = window._trendingCache;
+  openRealCardDetail(idx);
+}
+
 async function quickSearch(name){
   document.getElementById('main-search').value = name;
   doRealSearch();
 }
 
 async function doRealSearch(){
-  const q = document.getElementById('main-search').value.trim();
-  if(!q){ document.getElementById('search-results').innerHTML = '<div class="no-result">カード名を入力してください</div>'; return; }
+  const rawQ = document.getElementById('main-search').value.trim();
+  if(!rawQ){ document.getElementById('search-results').innerHTML = '<div class="no-result">カード名を入力してください</div>'; return; }
+
+  const q = translateQuery(rawQ);
   document.getElementById('search-results').innerHTML = '<div class="loading-inline"><div class="spinner"></div>カードデータベースを検索中...</div>';
   document.getElementById('search-upd').textContent = '';
+  document.getElementById('search-results').scrollIntoView({behavior:'smooth', block:'start'});
+
   try {
     const url = `https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(q)}*&pageSize=60&orderBy=-set.releaseDate`;
-    const res = await fetch(url, { method: 'GET' });
+    const res = await fetch(url);
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const results = data.data || [];
+    let results = data.data || [];
     if(results.length === 0){
-      // フォールバック：ワイルドカードなしで再検索
       const url2 = `https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(q)}&pageSize=60`;
       const res2 = await fetch(url2);
-      const data2 = await res2.json();
-      renderSearchResults(data2.data || [], q);
-    } else {
-      renderSearchResults(results, q);
+      if(res2.ok){
+        const data2 = await res2.json();
+        results = data2.data || [];
+      }
     }
+    renderSearchResults(results, rawQ, q);
   } catch(e){
     console.error('Search error:', e);
-    document.getElementById('search-results').innerHTML = `<div class="no-result">検索に失敗しました（${e.message}）。しばらくしてから再度お試しください。</div>`;
+    document.getElementById('search-results').innerHTML = `<div class="no-result">検索中にエラーが発生しました。少し時間をおいて再度お試しください。<br><span style="font-size:0.72rem;color:#666">(${e.message})</span></div>`;
   }
 }
 
@@ -287,3 +352,5 @@ renderMarket();
 renderBox();
 renderOripa();
 renderShop();
+loadTrending();
+loadHeroBg();
