@@ -98,12 +98,14 @@ const boxes = [
 
 const boxEraNames = {classic:'第1世代', xy:'XY期', sm:'SM期', sword:'S&S期', scarlet:'SV期'};
 
+// ── オンラインオリパ（実在サービス）──
+// ★各社の招待コード・アフィリエイトリンクは公式パートナープログラムへの申請が必要です
 const oripas = [
-  {id:1, rank:1, name:'オリパ魂', emoji:'🎴', rating:4.6, reviews:'2,400+', tags:['高額当たり実績', '発送が早い'], desc:'ポケカ専門のオンラインオリパ。当たり報告がSNSで多く拡散されている人気サービス。', url:'#'},
-  {id:2, rank:2, name:'トレカジャパンオリパ', emoji:'🎯', rating:4.4, reviews:'1,800+', tags:['低価格帯あり', '初心者向け'], desc:'500円〜の低価格帯から楽しめるオリパサービス。初めてのオリパ体験に向いている。', url:'#'},
-  {id:3, rank:3, name:'カードラッシュオリパ', emoji:'💎', rating:4.3, reviews:'3,100+', tags:['大手運営', '実店舗あり'], desc:'実店舗を持つ大手カードショップが運営。信頼性を重視する人におすすめ。', url:'#'},
-  {id:4, rank:4, name:'ポケカガチャオンライン', emoji:'🎰', rating:4.1, reviews:'920+', tags:['SR以上確定枠あり'], desc:'SR以上確定パックなど企画性のあるオリパが多い。', url:'#'},
-  {id:5, rank:5, name:'プレミアムオリパ', emoji:'👑', rating:4.0, reviews:'650+', tags:['高額カード中心'], desc:'1パックあたりの単価は高めだが、PSA鑑定済みカードが当たる企画もある。', url:'#'},
+  {id:1, rank:1, name:'DOPA！', emoji:'🎴', rating:4.7, reviews:'11万人+フォロワー', tags:['業界最大手','還元率トップクラス','SNS当選報告No.1'], desc:'株式会社sinsa運営。会員数100万人超の業界最大級オンラインオリパ。高還元率ガチャが豊富でSNSでの当選報告も圧倒的に多い。', url:'https://dopa-place.com/', code:'招待コードあり（公式サイト参照）'},
+  {id:2, rank:2, name:'日本トレカセンター', emoji:'🎯', rating:4.5, reviews:'発送速度No.1評価', tags:['発送が早い','カジサック起用','初心者向け'], desc:'当日出荷も多く、発送スピードに定評がある大手オリパサイト。口数も比較的少なく初心者でも始めやすい。', url:'https://japan-toreca.com/', code:'登録特典あり（公式サイト参照）'},
+  {id:3, rank:3, name:'オリパワン', emoji:'💎', rating:4.4, reviews:'還元率業界TOP級', tags:['還元率が高い','安定感重視'], desc:'還元率の高さで定評のあるオリパサービス。安定感を重視する利用者から支持されている。', url:'#', code:'公式サイト参照'},
+  {id:4, rank:4, name:'カードラッシュオリパ', emoji:'🛒', rating:4.3, reviews:'実店舗運営の安心感', tags:['大手カードショップ運営','実店舗あり'], desc:'実店舗を持つ大手カードショップ「カードラッシュ」が運営。信頼性を重視する人に向いている。', url:'https://www.cardrush-pokemon.jp/', code:''},
+  {id:5, rank:5, name:'Cloveオリパ', emoji:'🍀', rating:4.1, reviews:'人気上昇中', tags:['新興サービス','話題性あり'], desc:'比較的新しいオンラインオリパサービスだが口コミでの評価が伸びている。', url:'#', code:''},
 ];
 
 const shops = [
