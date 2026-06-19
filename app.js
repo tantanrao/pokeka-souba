@@ -36,28 +36,44 @@ async function doRealSearch(){
   document.getElementById('search-upd').textContent = '';
   try {
     const url = `https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(q)}*&pageSize=60&orderBy=-set.releaseDate`;
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('API error');
+    const res = await fetch(url, { method: 'GET' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    renderSearchResults(data.data || [], q);
+    const results = data.data || [];
+    if(results.length === 0){
+      // フォールバック：ワイルドカードなしで再検索
+      const url2 = `https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(q)}&pageSize=60`;
+      const res2 = await fetch(url2);
+      const data2 = await res2.json();
+      renderSearchResults(data2.data || [], q);
+    } else {
+      renderSearchResults(results, q);
+    }
   } catch(e){
-    document.getElementById('search-results').innerHTML = `<div class="no-result">検索に失敗しました。しばらくしてから再度お試しください。<br><span style="font-size:0.75rem">（外部データベースへの接続エラー）</span></div>`;
+    console.error('Search error:', e);
+    document.getElementById('search-results').innerHTML = `<div class="no-result">検索に失敗しました（${e.message}）。しばらくしてから再度お試しください。</div>`;
   }
 }
 
 function renderSearchResults(results, query){
   if(results.length===0){
-    document.getElementById('search-results').innerHTML = `<div class="no-result">「${query}」に一致するカードが見つかりませんでした。英語名（例：Charizard）でも試してみてください。</div>`;
+    document.getElementById('search-results').innerHTML = `<div class="no-result">「${query}」に一致するカードが見つかりませんでした。英語名（例：Charizard, Pikachu, Rayquaza）でお試しください。</div>`;
     return;
   }
   document.getElementById('search-upd').textContent = `${results.length}件のカードが見つかりました`;
   window._searchCache = results;
   document.getElementById('search-results').innerHTML = `<div class="card-grid">` + results.map((c,i)=>{
-    const img = c.images ? c.images.small : '';
+    const img = c.images && c.images.small ? c.images.small : '';
     const setName = c.set ? c.set.name : '';
     const rarity = c.rarity || '';
+    const imgHtml = img
+      ? `<img src="${img}" alt="${c.name}" loading="lazy" onerror="this.parentElement.querySelector('.tile-placeholder').style.display='flex';this.style.display='none'">`
+      : '';
     return `<div class="card-tile" onclick="openRealCardDetail(${i})">
-      <img src="${img}" alt="${c.name}" loading="lazy" onerror="this.style.display='none'">
+      <div class="card-tile-imgwrap">
+        ${imgHtml}
+        <div class="tile-placeholder" style="display:${img?'none':'flex'}">🎴</div>
+      </div>
       <div class="card-tile-name">${c.name}</div>
       <div class="card-tile-set">${setName}</div>
       ${rarity?`<div class="card-tile-rarity">${rarity}</div>`:''}
@@ -223,7 +239,7 @@ function renderBox(){
   document.getElementById('box-list').innerHTML = filtered.map(b=>`
     <div class="box-card">
       <div class="box-card-top">
-        <div class="box-emoji">${b.emoji}</div>
+        <div class="box-visual"><span>${b.emoji}</span></div>
         <div><div class="box-name">${b.name}</div><div class="box-release">${b.release}<span class="era-tag">${boxEraNames[b.era]}</span></div></div>
       </div>
       <div class="box-price-row"><span class="box-price-label">参考価格</span><span class="box-price">${fmtJPY(b.price)}</span></div>
@@ -245,6 +261,7 @@ function renderOripa(){
         <div class="oripa-rating"><span class="stars">${starStr}</span><span class="oripa-rating-num">${o.rating} (${o.reviews})</span></div>
         <div class="oripa-tags">${o.tags.map(t=>`<span class="oripa-tag">${t}</span>`).join('')}</div>
         <div class="oripa-desc">${o.desc}</div>
+        ${o.code ? `<div class="oripa-code">🎁 ${o.code}</div>` : ''}
         <a class="oripa-btn" href="${o.url}" target="_blank" rel="noopener sponsored">公式サイトを見る →</a>
       </div>
     </div>`;
