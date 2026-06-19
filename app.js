@@ -350,6 +350,8 @@ function closeDetail(){
 }
 
 function buildAffiliateLinks(q){
+  const mercariUrl = affLink(MERCARI_AFF_TEMPLATE, `https://jp.mercari.com/search?keyword=${q}`, q);
+  const snkrdunkUrl = affLink(SNKRDUNK_AFF_TEMPLATE, `https://snkrdunk.com/search?keywords=${q}&brandIds=pokemon`, q);
   return `
     <a class="aff-link" href="https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFF_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F${q}%2F" target="_blank" rel="noopener sponsored">
       <span class="aff-link-shop">🛍️ 楽天市場で探す</span><span class="aff-link-arrow">→</span>
@@ -360,11 +362,14 @@ function buildAffiliateLinks(q){
     <a class="aff-link" href="https://www.cardrush-pokemon.jp/product-list?keyword=${q}" target="_blank" rel="noopener sponsored">
       <span class="aff-link-shop">🃏 カードラッシュで探す</span><span class="aff-link-arrow">→</span>
     </a>
+    <a class="aff-link" href="${snkrdunkUrl}" target="_blank" rel="noopener sponsored">
+      <span class="aff-link-shop">👟 スニダンで探す</span><span class="aff-link-arrow">→</span>
+    </a>
+    <a class="aff-link" href="${mercariUrl}" target="_blank" rel="noopener sponsored">
+      <span class="aff-link-shop">📱 メルカリで探す</span><span class="aff-link-arrow">→</span>
+    </a>
     <a class="aff-link" href="https://auctions.yahoo.co.jp/search/search?p=${q}" target="_blank" rel="noopener sponsored">
       <span class="aff-link-shop">🔨 ヤフオク！で探す</span><span class="aff-link-arrow">→</span>
-    </a>
-    <a class="aff-link" href="https://jp.mercari.com/search?keyword=${q}" target="_blank" rel="noopener sponsored">
-      <span class="aff-link-shop">📱 メルカリで探す</span><span class="aff-link-arrow">→</span>
     </a>`;
 }
 
@@ -420,6 +425,10 @@ function renderShop(){
       url = `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFF_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F${encodeURIComponent(s.rakutenQ)}%2F`;
     } else if(s.amazon){
       url = `https://www.amazon.co.jp/s?k=${encodeURIComponent('ポケモンカード')}&tag=${AMAZON_TAG}`;
+    } else if(s.mercari){
+      url = affLink(MERCARI_AFF_TEMPLATE, s.url, 'ポケモンカード');
+    } else if(s.snkrdunk){
+      url = affLink(SNKRDUNK_AFF_TEMPLATE, s.url, 'ポケモンカード');
     }
     return `<div class="shop-card">
       <div class="shop-logo">${s.emoji}</div>
