@@ -29,26 +29,40 @@ img{max-width:100%}
 .hnav-mobile-scroll{overflow-x:auto;display:flex;gap:4px;-webkit-overflow-scrolling:touch}
 .hnav-mobile-scroll::-webkit-scrollbar{display:none}
 
-/* ── HERO (redesigned with character glow) ── */
-.hero{position:relative;padding:64px 20px 44px;text-align:center;overflow:hidden;background:#0a0c16}
+/* ── HERO (redesigned with real card image backdrop) ── */
+.hero{position:relative;padding:64px 20px 40px;text-align:center;overflow:hidden;background:#0a0c16}
 .hero::before{content:'';position:absolute;inset:0;background:
-  radial-gradient(circle at 15% 20%, rgba(255,140,40,0.18) 0%, transparent 32%),
-  radial-gradient(circle at 85% 15%, rgba(255,220,60,0.15) 0%, transparent 28%),
-  radial-gradient(circle at 50% 90%, rgba(77,142,255,0.12) 0%, transparent 35%),
-  radial-gradient(ellipse at 50% -10%, rgba(255,200,69,0.14) 0%, transparent 60%);
+  radial-gradient(circle at 12% 25%, rgba(255,140,40,0.16) 0%, transparent 30%),
+  radial-gradient(circle at 88% 20%, rgba(255,220,60,0.14) 0%, transparent 28%),
+  radial-gradient(circle at 50% 95%, rgba(77,142,255,0.1) 0%, transparent 35%),
+  radial-gradient(ellipse at 50% -10%, rgba(255,200,69,0.13) 0%, transparent 60%);
   z-index:0}
-.hero-mons{position:absolute;inset:0;z-index:0;overflow:hidden;opacity:0.5;pointer-events:none}
-.hero-mon{position:absolute;font-size:5.5rem;filter:blur(0.3px) drop-shadow(0 0 30px rgba(255,200,69,0.25));animation:floaty 7s ease-in-out infinite}
-.hero-mon.m1{top:8%;left:4%;font-size:7rem;animation-delay:0s}
-.hero-mon.m2{top:55%;left:88%;font-size:6rem;animation-delay:1.2s}
-.hero-mon.m3{top:6%;left:85%;font-size:4.5rem;animation-delay:2.4s}
-.hero-mon.m4{top:62%;left:6%;font-size:5rem;animation-delay:3.1s}
-@keyframes floaty{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-18px) rotate(3deg)}}
+.hero-bgimg{position:absolute;inset:0;z-index:0;opacity:0.16;filter:blur(1px);overflow:hidden}
+.hero-bgimg img{position:absolute;width:220px;border-radius:16px;object-fit:cover;box-shadow:0 0 60px rgba(255,200,69,0.15)}
+.hero-bgimg img.b1{top:-30px;left:-40px;transform:rotate(-12deg)}
+.hero-bgimg img.b2{top:20px;right:-50px;transform:rotate(10deg)}
+.hero-bgimg img.b3{bottom:-60px;left:8%;transform:rotate(8deg);width:180px}
+.hero-bgimg img.b4{bottom:-40px;right:6%;transform:rotate(-10deg);width:190px}
 .hero-content{position:relative;z-index:1}
 .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,200,69,0.1);border:1px solid rgba(255,200,69,0.28);color:var(--gold);font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:20px;backdrop-filter:blur(4px)}
-.hero h1{font-size:clamp(1.8rem,5.5vw,3.2rem);font-weight:900;line-height:1.18;margin-bottom:12px;text-shadow:0 4px 24px rgba(0,0,0,0.4)}
+.hero h1{font-size:clamp(1.8rem,5.5vw,3.2rem);font-weight:900;line-height:1.18;margin-bottom:12px;text-shadow:0 4px 24px rgba(0,0,0,0.5)}
 .hero h1 em{color:var(--gold);font-style:normal;text-shadow:0 0 30px rgba(255,200,69,0.4)}
 .hero-sub{font-size:0.92rem;color:#c8cad8;max-width:520px;margin:0 auto;font-weight:300;line-height:1.7}
+
+/* ── trending carousel ── */
+.trending-wrap{padding:24px 0 8px;overflow:hidden;background:linear-gradient(180deg,#0a0c16,#0d1020)}
+.trending-label{font-size:0.82rem;font-weight:700;color:var(--gold);max-width:1100px;margin:0 auto 14px;padding:0 20px}
+.trending-track-outer{overflow:hidden;position:relative;mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.trending-track{display:flex;gap:14px;animation:scrollLeft 32s linear infinite;width:max-content;padding:0 20px}
+.trending-track:hover{animation-play-state:paused}
+@keyframes scrollLeft{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.trending-card{flex-shrink:0;width:110px;cursor:pointer;transition:transform 0.2s}
+.trending-card:hover{transform:translateY(-4px) scale(1.04)}
+.trending-card img{width:100%;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.4);aspect-ratio:2.5/3.5;object-fit:cover;background:linear-gradient(135deg,#222840,#161a30)}
+.trending-card-name{font-size:0.68rem;color:var(--muted);text-align:center;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trending-loading{padding:40px;color:var(--muted);font-size:0.85rem}
+
+@media(max-width:600px){.hero-bgimg img{width:130px}}
 
 /* ── card tile image wrapper ── */
 .card-tile-imgwrap{position:relative;width:100%;aspect-ratio:2.5/3.5;border-radius:8px;margin-bottom:8px;overflow:hidden;background:linear-gradient(135deg,#222840,#161a30)}
@@ -216,12 +230,7 @@ img{max-width:100%}
 </header>
 
 <section class="hero" id="hero-section">
-  <div class="hero-mons">
-    <div class="hero-mon m1">🔥</div>
-    <div class="hero-mon m2">⚡</div>
-    <div class="hero-mon m3">🐉</div>
-    <div class="hero-mon m4">🌊</div>
-  </div>
+  <div class="hero-bgimg" id="hero-bg-images"></div>
   <div class="hero-content">
   <div class="hero-badge">🔍 全カード検索対応</div>
   <h1>あらゆるポケカ情報を<br><em>ここに集約</em></h1>
@@ -242,19 +251,27 @@ img{max-width:100%}
   </div>
 </section>
 
-<!-- AD -->
-<div class="ad-slot">
-  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9815681802683480" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
-
-<!-- ═══════ MAIN: SEARCH (real API results) ═══════ -->
-<div class="section" id="main-search-section">
+<!-- ═══════ SEARCH RESULTS (directly under hero) ═══════ -->
+<div class="section" id="main-search-section" style="padding-top:12px">
   <div class="section-title">カード検索結果<span class="upd" id="search-upd"></span></div>
   <div class="section-desc">実際のポケモンカードデータベースと連携。同名カードの全バージョンを画像付きで表示します。</div>
   <div id="search-results">
     <div class="no-result">上の検索欄にカード名を入力するか、クイック検索タグをクリックしてください</div>
   </div>
+</div>
+
+<!-- ═══════ TRENDING CAROUSEL (auto-scrolling popular cards) ═══════ -->
+<div class="trending-wrap" id="trending-section">
+  <div class="trending-label">🔥 今、注目されているカード</div>
+  <div class="trending-track-outer">
+    <div class="trending-track" id="trending-track"></div>
+  </div>
+</div>
+
+<!-- AD -->
+<div class="ad-slot">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9815681802683480" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 
 <!-- ═══════ MAIN: RANKING (curated PSA data) ═══════ -->
