@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ポケカ相場ナビ — 実カード検索×PSA相場×オリパランキング</title>
+<meta name="description" content="ポケモンカード全種類を検索・画像表示。PSA鑑定相場ランキング、BOX情報、オンラインオリパランキング、カードショップ比較まで一つに集約。">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9815681802683480" crossorigin="anonymous"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;600;700;800&display=swap');
+:root{
+  --bg:#0a0c16; --bg2:#11142a; --card:#161a32; --card2:#1c2140;
+  --gold:#ffc845; --gold2:#ffb020; --blue:#4d8eff; --red:#ff5d6c; --green:#3ddc97; --purple:#a78bfa;
+  --white:#eef0f8; --muted:#7a8090; --border:rgba(255,255,255,0.08);
+  --gradient-gold: linear-gradient(135deg,#ffc845,#ff8c42);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--white);font-family:'Noto Sans JP',sans-serif;min-height:100vh}
+img{max-width:100%}
+
+/* ── HEADER ── */
+.header{height:60px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(10,12,22,0.95);backdrop-filter:blur(14px);position:sticky;top:0;z-index:200}
+.logo{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:800;display:flex;align-items:center;gap:6px}
+.logo em{color:var(--gold);font-style:normal}
+.hnav{display:flex;gap:4px;align-items:center}
+.hnav-item{font-size:0.82rem;color:var(--muted);text-decoration:none;cursor:pointer;padding:8px 14px;border-radius:8px;transition:all 0.15s;white-space:nowrap}
+.hnav-item:hover{color:var(--white);background:rgba(255,255,255,0.05)}
+.hnav-item.active{color:#0a0c16;background:var(--gold);font-weight:700}
+.hnav-mobile-scroll{overflow-x:auto;display:flex;gap:4px;-webkit-overflow-scrolling:touch}
+.hnav-mobile-scroll::-webkit-scrollbar{display:none}
+
+/* ── HERO ── */
+.hero{padding:52px 20px 36px;text-align:center;background:radial-gradient(ellipse at 50% -10%,rgba(255,200,69,0.12) 0%,transparent 60%)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,200,69,0.08);border:1px solid rgba(255,200,69,0.22);color:var(--gold);font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:20px}
+.hero h1{font-size:clamp(1.7rem,5vw,2.8rem);font-weight:900;line-height:1.18;margin-bottom:12px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:0.92rem;color:var(--muted);max-width:520px;margin:0 auto;font-weight:300;line-height:1.7}
+
+.search-mega{max-width:620px;margin:28px auto 0;position:relative;padding:0 20px}
+.search-input-mega{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px 56px 16px 20px;color:var(--white);font-family:'Noto Sans JP',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.15s}
+.search-input-mega:focus{border-color:rgba(255,200,69,0.45)}
+.search-icon-btn{position:absolute;right:32px;top:50%;transform:translateY(-50%);background:var(--gradient-gold);border:none;width:38px;height:38px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.search-hint{font-size:0.72rem;color:var(--muted);margin-top:10px;text-align:center}
+
+.quick-tags{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap;padding:0 20px}
+.qtag{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:0.78rem;color:var(--muted);cursor:pointer;transition:all 0.15s}
+.qtag:hover{border-color:rgba(255,200,69,0.4);color:var(--white)}
+
+/* ── NAV TABS (main sections) ── */
+.maintabs{display:flex;gap:6px;max-width:1100px;margin:32px auto 0;padding:0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.maintabs::-webkit-scrollbar{display:none}
+.maintab{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:0.85rem;cursor:pointer;color:var(--muted);transition:all 0.15s;white-space:nowrap;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.maintab.active{background:#fff;color:#0a0c16;border-color:#fff;font-weight:700}
+
+/* ── FILTER BAR ── */
+.filter-bar{max-width:1100px;margin:20px auto 0;padding:0 20px}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.filter-label{font-size:0.68rem;color:var(--muted);width:100%;margin-bottom:2px;letter-spacing:1px;text-transform:uppercase}
+.chip{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:7px 15px;font-size:0.78rem;cursor:pointer;color:var(--muted);transition:all 0.15s;white-space:nowrap}
+.chip.active{background:var(--gold);color:#0a0c16;border-color:var(--gold);font-weight:700}
+
+.section{max-width:1100px;margin:0 auto;padding:28px 20px}
+.section-title{font-size:1.05rem;font-weight:700;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.section-desc{font-size:0.78rem;color:var(--muted);margin-bottom:16px}
+.upd{font-size:0.68rem;color:var(--muted);font-weight:400}
+
+/* ── LOADING ── */
+.loading-inline{text-align:center;padding:40px 20px;color:var(--muted);font-size:0.85rem}
+.spinner{width:28px;height:28px;border:2px solid rgba(255,200,69,0.15);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── CARD GRID (real card search results with images) ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.card-tile{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;cursor:pointer;transition:all 0.15s;text-align:center}
+.card-tile:hover{border-color:rgba(255,200,69,0.4);transform:translateY(-2px)}
+.card-tile img{width:100%;border-radius:8px;margin-bottom:8px;background:#222}
+.card-tile-name{font-size:0.78rem;font-weight:700;line-height:1.3;margin-bottom:3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.card-tile-set{font-size:0.68rem;color:var(--muted)}
+.card-tile-rarity{display:inline-block;margin-top:5px;font-size:0.62rem;background:rgba(255,200,69,0.12);color:var(--gold);padding:2px 8px;border-radius:5px}
+
+/* ── RANKING LIST ── */
+.rank-row{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:9px;padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color 0.15s}
+.rank-row:hover{border-color:rgba(255,200,69,0.3)}
+.rank-num{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;color:var(--muted);width:30px;flex-shrink:0;text-align:center}
+.rank-num.top1{color:var(--gold)} .rank-num.top2{color:#c9d4e8} .rank-num.top3{color:#cd8c52}
+.rank-thumb{width:46px;height:64px;border-radius:6px;background:linear-gradient(135deg,#2a3050,#1a1f38);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.3rem;overflow:hidden}
+.rank-thumb img{width:100%;height:100%;object-fit:cover}
+.rank-info{flex:1;min-width:0}
+.rank-name{font-size:0.9rem;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-meta{font-size:0.72rem;color:var(--muted)}
+.era-tag{display:inline-block;background:rgba(77,142,255,0.12);color:var(--blue);font-size:0.62rem;padding:1px 7px;border-radius:4px;margin-left:6px}
+.rank-stats{display:flex;gap:16px;align-items:center;flex-shrink:0}
+.stat-block{text-align:right}
+.stat-val{font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:700}
+.stat-label{font-size:0.6rem;color:var(--muted)}
+.trend-up{color:var(--green)} .trend-down{color:var(--red)}
+
+.ad-slot{max-width:1100px;margin:20px auto;padding:0 20px}
+
+/* ── BOX SECTION ── */
+.box-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.box-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;transition:border-color 0.15s}
+.box-card:hover{border-color:rgba(255,200,69,0.3)}
+.box-card-top{display:flex;gap:14px;margin-bottom:14px}
+.box-emoji{font-size:2.2rem;width:56px;height:56px;background:linear-gradient(135deg,#2a3050,#1a1f38);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.box-name{font-size:0.95rem;font-weight:700;margin-bottom:3px}
+.box-release{font-size:0.7rem;color:var(--muted)}
+.box-price-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;padding-top:10px;border-top:1px solid var(--border)}
+.box-price-label{font-size:0.7rem;color:var(--muted)}
+.box-price{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;color:var(--gold)}
+.box-meta-row{display:flex;justify-content:space-between;font-size:0.74rem;color:var(--muted);margin-bottom:12px}
+.box-buy-btn{display:block;width:100%;text-align:center;background:var(--gradient-gold);color:#0a0c16;padding:10px;border-radius:8px;font-size:0.82rem;font-weight:700;text-decoration:none}
+
+/* ── ORIPA SECTION ── */
+.oripa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.oripa-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0;overflow:hidden;transition:border-color 0.15s}
+.oripa-card:hover{border-color:rgba(255,200,69,0.35)}
+.oripa-rank-badge{position:absolute;top:12px;left:12px;background:var(--gradient-gold);color:#0a0c16;font-size:0.72rem;font-weight:800;padding:4px 10px;border-radius:8px;z-index:2}
+.oripa-banner{height:90px;background:linear-gradient(135deg,#2a1850,#1a0f38);position:relative;display:flex;align-items:center;justify-content:center;font-size:2.4rem}
+.oripa-body{padding:16px}
+.oripa-name{font-size:0.95rem;font-weight:700;margin-bottom:6px}
+.oripa-rating{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.stars{color:var(--gold);font-size:0.85rem}
+.oripa-rating-num{font-size:0.78rem;color:var(--muted)}
+.oripa-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.oripa-tag{background:rgba(167,139,250,0.12);color:var(--purple);font-size:0.66rem;padding:3px 9px;border-radius:5px}
+.oripa-desc{font-size:0.78rem;color:#bbb;line-height:1.6;margin-bottom:14px}
+.oripa-btn{display:block;text-align:center;background:var(--gradient-gold);color:#0a0c16;padding:11px;border-radius:8px;font-size:0.85rem;font-weight:700;text-decoration:none}
+
+/* ── SHOP SECTION ── */
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.shop-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;transition:border-color 0.15s}
+.shop-card:hover{border-color:rgba(255,200,69,0.3)}
+.shop-logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#2a3050,#1a1f38);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 12px}
+.shop-name{font-size:0.9rem;font-weight:700;margin-bottom:4px}
+.shop-desc{font-size:0.72rem;color:var(--muted);margin-bottom:14px;line-height:1.5;min-height:32px}
+.shop-btn{display:block;background:var(--card2);border:1px solid var(--border);color:var(--white);padding:9px;border-radius:8px;font-size:0.8rem;font-weight:700;text-decoration:none;transition:all 0.15s}
+.shop-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── ERA TOP ── */
+.era-block{margin-bottom:28px}
+.era-block-title{font-size:0.95rem;font-weight:700;margin-bottom:10px;color:var(--gold)}
+
+.no-result{text-align:center;padding:60px 20px;color:var(--muted);font-size:0.88rem}
+
+/* ── DETAIL MODAL ── */
+.detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:300;align-items:center;justify-content:center;padding:16px}
+.detail-overlay.active{display:flex}
+.detail-modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;padding:0}
+.detail-img-area{background:linear-gradient(135deg,#1a1030,#0a0c16);padding:28px;text-align:center;position:relative}
+.detail-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:1.2rem;width:32px;height:32px;border-radius:50%;cursor:pointer;z-index:2}
+.detail-img-area img{max-height:280px;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,0.5)}
+.detail-body{padding:24px 28px 28px}
+.detail-title{font-size:1.25rem;font-weight:900;margin-bottom:4px}
+.detail-sub{font-size:0.84rem;color:var(--muted);margin-bottom:20px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.detail-stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px}
+.detail-stat-label{font-size:0.64rem;color:var(--muted);margin-bottom:5px}
+.detail-stat-val{font-size:1.05rem;font-weight:700}
+.detail-note{background:rgba(255,200,69,0.06);border:1px solid rgba(255,200,69,0.15);border-radius:10px;padding:14px;font-size:0.8rem;color:#ccc;line-height:1.65;margin-bottom:16px}
+.affiliate-box{background:linear-gradient(135deg,rgba(255,93,108,0.08),rgba(255,200,69,0.08));border:1px solid rgba(255,200,69,0.2);border-radius:12px;padding:16px}
+.affiliate-label{font-size:0.66rem;color:var(--gold);font-weight:700;letter-spacing:1px;margin-bottom:10px}
+.affiliate-links{display:flex;flex-direction:column;gap:8px}
+.aff-link{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px 14px;text-decoration:none;color:var(--white);font-size:0.82rem;transition:border-color 0.15s}
+.aff-link:hover{border-color:rgba(255,200,69,0.4)}
+.aff-link-shop{font-weight:700}
+.aff-link-arrow{color:var(--gold)}
+
+.disclaimer{max-width:1100px;margin:44px auto 64px;padding:0 20px;font-size:0.73rem;color:var(--muted);line-height:1.85;border-top:1px solid var(--border);padding-top:24px}
+
+@media(max-width:600px){.card-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}.rank-stats{gap:8px}.stat-label{display:none}.box-grid,.oripa-grid,.shop-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.box-grid,.oripa-grid,.shop-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">ポケカ<em>相場ナビ</em></div>
+  <nav class="hnav hnav-mobile-scroll">
+    <a class="hnav-item active" data-main="search" onclick="showMain('search')">カード検索</a>
+    <a class="hnav-item" data-main="ranking" onclick="showMain('ranking')">PSA相場</a>
+    <a class="hnav-item" data-main="box" onclick="showMain('box')">BOX情報</a>
+    <a class="hnav-item" data-main="oripa" onclick="showMain('oripa')">オリパ</a>
+    <a class="hnav-item" data-main="shop" onclick="showMain('shop')">ショップ</a>
+  </nav>
+</header>
+
+<section class="hero" id="hero-section">
+  <div class="hero-badge">🔍 全カード検索対応</div>
+  <h1>あらゆるポケカ情報を<br><em>ここに集約</em></h1>
+  <p class="hero-sub">実カードデータベースから検索・画像表示。PSA相場ランキング、BOX価格、オリパ比較、ショップ情報まで一つに。</p>
+  <div class="search-mega">
+    <input type="text" class="search-input-mega" id="main-search" placeholder="カード名で検索（例：リザードン、ピカチュウ）">
+    <button class="search-icon-btn" onclick="doRealSearch()">🔍</button>
+  </div>
+  <div class="search-hint">実カードデータベースと連携。日本語名・英語名どちらでも検索可能</div>
+  <div class="quick-tags">
+    <div class="qtag" onclick="quickSearch('Charizard')">リザードン</div>
+    <div class="qtag" onclick="quickSearch('Pikachu')">ピカチュウ</div>
+    <div class="qtag" onclick="quickSearch('Mewtwo')">ミュウツー</div>
+    <div class="qtag" onclick="quickSearch('Lugia')">ルギア</div>
+    <div class="qtag" onclick="quickSearch('Eevee')">イーブイ</div>
+    <div class="qtag" onclick="quickSearch('Rayquaza')">レックウザ</div>
+  </div>
+</section>
+
+<!-- AD -->
+<div class="ad-slot">
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9815681802683480" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
+<!-- ═══════ MAIN: SEARCH (real API results) ═══════ -->
+<div class="section" id="main-search-section">
+  <div class="section-title">カード検索結果<span class="upd" id="search-upd"></span></div>
+  <div class="section-desc">実際のポケモンカードデータベースと連携。同名カードの全バージョンを画像付きで表示します。</div>
+  <div id="search-results">
+    <div class="no-result">上の検索欄にカード名を入力するか、クイック検索タグをクリックしてください</div>
+  </div>
+</div>
+
+<!-- ═══════ MAIN: RANKING (curated PSA data) ═══════ -->
+<div class="section" id="main-ranking-section" style="display:none">
+  <div class="filter-bar" style="padding:0;margin:0 0 20px">
+    <div class="filter-row">
+      <div class="filter-label">発売世代</div>
+      <div class="chip active" data-era="all" onclick="setEra('all')">すべて</div>
+      <div class="chip" data-era="classic" onclick="setEra('classic')">第1世代</div>
+      <div class="chip" data-era="xy" onclick="setEra('xy')">XY期</div>
+      <div class="chip" data-era="sm" onclick="setEra('sm')">SM期</div>
+      <div class="chip" data-era="sword" onclick="setEra('sword')">S&S期</div>
+      <div class="chip" data-era="scarlet" onclick="setEra('scarlet')">SV期</div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-label">ランキング軸</div>
+      <div class="chip active" data-metric="psa10" onclick="setRankMetric('psa10')">🏆 PSA10鑑定数</div>
+      <div class="chip" data-metric="trades" onclick="setRankMetric('trades')">🔥 取引数（人気）</div>
+      <div class="chip" data-metric="gem" onclick="setRankMetric('gem')">💎 Gem率（鑑定良好）</div>
+      <div class="chip" data-metric="bad" onclick="setRankMetric('bad')">⚠️ Bad率（要注意）</div>
+    </div>
+  </div>
+  <div class="maintabs" style="margin:0 0 20px;padding:0">
+    <div class="maintab active" data-rtab="rank" onclick="showRTab('rank')">🏆 PSAランキング</div>
+    <div class="maintab" data-rtab="market" onclick="showRTab('market')">📊 相場推移</div>
+    <div class="maintab" data-rtab="era" onclick="showRTab('era')">📅 世代別TOP</div>
+  </div>
+  <div id="r-rank"><div class="section-title">PSA10鑑定数ランキング<span class="upd" id="upd-rank"></span></div><div id="ranking-list"></div></div>
+  <div id="r-market" style="display:none"><div class="section-title">注目カードの国内・海外相場<span class="upd" id="upd-market"></span></div><div id="market-list"></div></div>
+  <div id="r-era" style="display:none"><div class="section-title">世代別 人気カードTOP5</div><div id="era-list"></div></div>
+</div>
+
+<!-- ═══════ MAIN: BOX ═══════ -->
+<div class="section" id="main-box-section" style="display:none">
+  <div class="section-title">BOX相場情報<span class="upd" id="upd-box"></span></div>
+  <div class="section-desc">未開封BOXの参考価格と購入先をまとめています。</div>
+  <div class="filter-bar" style="padding:0;margin:0 0 16px">
+    <div class="filter-row">
+      <div class="filter-label">発売世代</div>
+      <div class="chip active" data-boxera="all" onclick="setBoxEra('all')">すべて</div>
+      <div class="chip" data-boxera="classic" onclick="setBoxEra('classic')">第1世代</div>
+      <div class="chip" data-boxera="xy" onclick="setBoxEra('xy')">XY期</div>
+      <div class="chip" data-boxera="sm" onclick="setBoxEra('sm')">SM期</div>
+      <div class="chip" data-boxera="sword" onclick="setBoxEra('sword')">S&S期</div>
+      <div class="chip" data-boxera="scarlet" onclick="setBoxEra('scarlet')">SV期</div>
+    </div>
+  </div>
+  <div class="box-grid" id="box-list"></div>
+</div>
+
+<!-- ═══════ MAIN: ORIPA ═══════ -->
+<div class="section" id="main-oripa-section" style="display:none">
+  <div class="section-title">オンラインオリパ ランキング<span class="upd" id="upd-oripa"></span></div>
+  <div class="section-desc">人気のオンラインオリパサービスを比較。当たり報告・評判をもとにランキングしています。</div>
+  <div class="oripa-grid" id="oripa-list" style="position:relative"></div>
+</div>
+
+<!-- ═══════ MAIN: SHOP ═══════ -->
+<div class="section" id="main-shop-section" style="display:none">
+  <div class="section-title">ポケカ販売ショップ一覧</div>
+  <div class="section-desc">国内主要オンラインカードショップをまとめています。</div>
+  <div class="shop-grid" id="shop-list"></div>
+</div>
+
+<div class="disclaimer" id="disclaimer-text"></div>
+
+<!-- DETAIL MODAL -->
+<div class="detail-overlay" id="detail-overlay" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-modal">
+    <div class="detail-img-area">
+      <button class="detail-close" onclick="closeDetail()">×</button>
+      <img id="d-img" src="" alt="">
+    </div>
+    <div class="detail-body">
+      <div class="detail-title" id="d-title">—</div>
+      <div class="detail-sub" id="d-sub">—</div>
+      <div class="detail-grid" id="d-grid"></div>
+      <div class="detail-note" id="d-note" style="display:none"></div>
+      <div class="affiliate-box">
+        <div class="affiliate-label">🛒 このカードを探す</div>
+        <div class="affiliate-links" id="d-affiliate"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
