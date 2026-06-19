@@ -28,7 +28,7 @@ function showRTab(tab){
 // ── HERO BACKGROUND (real card art) ──
 async function loadHeroBg(){
   try {
-    const names = ['Charizard','Rayquaza','Pikachu','Lugia'];
+    const names = ['Charizard','Rayquaza','Pikachu','Lugia','Umbreon','Mewtwo','Mew','Eevee'];
     const promises = names.map(name =>
       fetch(`https://api.pokemontcg.io/v2/cards?q=name:${name}&pageSize=1&orderBy=-set.releaseDate`)
         .then(r => r.ok ? r.json() : {data:[]}).catch(() => ({data:[]}))
@@ -36,7 +36,7 @@ async function loadHeroBg(){
     const resultsArr = await Promise.all(promises);
     const imgs = resultsArr.map(r => r.data && r.data[0] && r.data[0].images ? r.data[0].images.small : null).filter(Boolean);
     if(imgs.length === 0) return;
-    const classes = ['b1','b2','b3','b4'];
+    const classes = ['b1','b2','b3','b4','b5','b6','b7','b8'];
     document.getElementById('hero-bg-images').innerHTML = imgs.map((src,i) =>
       `<img class="${classes[i]||''}" src="${src}" alt="">`
     ).join('');
@@ -44,7 +44,7 @@ async function loadHeroBg(){
 }
 
 // ── TRENDING CAROUSEL ──
-const trendingNames = ['Charizard','Pikachu','Mewtwo','Rayquaza','Umbreon','Gardevoir','Lugia','Eevee','Greninja','Snorlax'];
+const trendingNames = ['Charizard','Pikachu','Mewtwo','Rayquaza','Umbreon','Gardevoir','Lugia','Eevee','Greninja','Snorlax','Mew','Sylveon','Garchomp','Lucario'];
 
 async function loadTrending(){
   const track = document.getElementById('trending-track');
@@ -60,8 +60,17 @@ async function loadTrending(){
     resultsArr.forEach(r => { if(r.data && r.data.length) allCards.push(r.data[0]); });
 
     if(allCards.length === 0){
-      document.getElementById('trending-section').style.display = 'none';
-      return;
+      // 1回だけ少し待って再試行（一時的なAPI混雑/レート制限対策）
+      await new Promise(res => setTimeout(res, 1500));
+      const retryArr = await Promise.all(trendingNames.slice(0,6).map(name =>
+        fetch(`https://api.pokemontcg.io/v2/cards?q=name:${name}&pageSize=1&orderBy=-set.releaseDate`)
+          .then(r => r.ok ? r.json() : {data:[]}).catch(() => ({data:[]}))
+      ));
+      retryArr.forEach(r => { if(r.data && r.data.length) allCards.push(r.data[0]); });
+      if(allCards.length === 0){
+        document.getElementById('trending-section').style.display = 'none';
+        return;
+      }
     }
 
     window._trendingCache = allCards;
@@ -70,7 +79,10 @@ async function loadTrending(){
       const img = c.images && c.images.small ? c.images.small : '';
       const realIdx = i % allCards.length;
       return `<div class="trending-card" onclick="openTrendingDetail(${realIdx})">
-        <img src="${img}" alt="${c.name}" loading="lazy">
+        <div class="trending-card-imgwrap">
+          <div class="trending-rank">${realIdx+1}</div>
+          <img src="${img}" alt="${c.name}" loading="lazy">
+        </div>
         <div class="trending-card-name">${c.name}</div>
       </div>`;
     }).join('');
