@@ -17,7 +17,6 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--white);font-family:'Noto Sans JP',sans-serif;min-height:100vh}
 img{max-width:100%}
-
 /* ── HEADER ── */
 .header{height:60px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(10,12,22,0.95);backdrop-filter:blur(14px);position:sticky;top:0;z-index:200}
 .logo{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;font-weight:800;display:flex;align-items:center;gap:6px}
@@ -28,7 +27,6 @@ img{max-width:100%}
 .hnav-item.active{color:#0a0c16;background:var(--gold);font-weight:700}
 .hnav-mobile-scroll{overflow-x:auto;display:flex;gap:4px;-webkit-overflow-scrolling:touch}
 .hnav-mobile-scroll::-webkit-scrollbar{display:none}
-
 /* ── HERO (redesigned with real card image backdrop) ── */
 .hero{position:relative;padding:64px 20px 40px;text-align:center;overflow:hidden;background:#0a0c16}
 .hero::before{content:'';position:absolute;inset:0;background:
@@ -37,18 +35,23 @@ img{max-width:100%}
   radial-gradient(circle at 50% 95%, rgba(77,142,255,0.1) 0%, transparent 35%),
   radial-gradient(ellipse at 50% -10%, rgba(255,200,69,0.13) 0%, transparent 60%);
   z-index:0}
-.hero-bgimg{position:absolute;inset:0;z-index:0;opacity:0.16;filter:blur(1px);overflow:hidden}
-.hero-bgimg img{position:absolute;width:220px;border-radius:16px;object-fit:cover;box-shadow:0 0 60px rgba(255,200,69,0.15)}
-.hero-bgimg img.b1{top:-30px;left:-40px;transform:rotate(-12deg)}
-.hero-bgimg img.b2{top:20px;right:-50px;transform:rotate(10deg)}
-.hero-bgimg img.b3{bottom:-60px;left:8%;transform:rotate(8deg);width:180px}
-.hero-bgimg img.b4{bottom:-40px;right:6%;transform:rotate(-10deg);width:190px}
+.hero-bgimg{position:absolute;inset:0;z-index:0;opacity:0.4;overflow:hidden}
+.hero-bgimg img{position:absolute;width:200px;border-radius:16px;object-fit:cover;box-shadow:0 0 70px rgba(255,200,69,0.35);animation:cardFloat 7s ease-in-out infinite}
+.hero-bgimg img.b1{top:-20px;left:-30px;transform:rotate(-12deg);animation-delay:0s}
+.hero-bgimg img.b2{top:10px;right:-40px;transform:rotate(10deg);width:170px;animation-delay:1.2s}
+.hero-bgimg img.b3{bottom:-50px;left:6%;transform:rotate(8deg);width:170px;animation-delay:2.4s}
+.hero-bgimg img.b4{bottom:-30px;right:4%;transform:rotate(-10deg);width:180px;animation-delay:0.6s}
+.hero-bgimg img.b5{top:38%;left:-60px;transform:rotate(-18deg);width:140px;animation-delay:1.8s}
+.hero-bgimg img.b6{top:42%;right:-60px;transform:rotate(16deg);width:140px;animation-delay:3s}
+.hero-bgimg img.b7{top:-60px;left:30%;transform:rotate(6deg);width:130px;animation-delay:0.9s}
+.hero-bgimg img.b8{bottom:-70px;right:28%;transform:rotate(-8deg);width:130px;animation-delay:2.1s}
+@keyframes cardFloat{0%,100%{transform-origin:center;translate:0 0}50%{translate:0 -14px}}
+.hero-bgimg img.b1,.hero-bgimg img.b2,.hero-bgimg img.b3,.hero-bgimg img.b4,.hero-bgimg img.b5,.hero-bgimg img.b6,.hero-bgimg img.b7,.hero-bgimg img.b8{will-change:transform}
 .hero-content{position:relative;z-index:1}
 .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,200,69,0.1);border:1px solid rgba(255,200,69,0.28);color:var(--gold);font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:20px;backdrop-filter:blur(4px)}
 .hero h1{font-size:clamp(1.8rem,5.5vw,3.2rem);font-weight:900;line-height:1.18;margin-bottom:12px;text-shadow:0 4px 24px rgba(0,0,0,0.5)}
 .hero h1 em{color:var(--gold);font-style:normal;text-shadow:0 0 30px rgba(255,200,69,0.4)}
 .hero-sub{font-size:0.92rem;color:#c8cad8;max-width:520px;margin:0 auto;font-weight:300;line-height:1.7}
-
 /* ── trending carousel ── */
 .trending-wrap{padding:24px 0 8px;overflow:hidden;background:linear-gradient(180deg,#0a0c16,#0d1020)}
 .trending-label{font-size:0.82rem;font-weight:700;color:var(--gold);max-width:1100px;margin:0 auto 14px;padding:0 20px}
@@ -56,63 +59,54 @@ img{max-width:100%}
 .trending-track{display:flex;gap:14px;animation:scrollLeft 32s linear infinite;width:max-content;padding:0 20px}
 .trending-track:hover{animation-play-state:paused}
 @keyframes scrollLeft{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.trending-card{flex-shrink:0;width:110px;cursor:pointer;transition:transform 0.2s}
-.trending-card:hover{transform:translateY(-4px) scale(1.04)}
-.trending-card img{width:100%;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.4);aspect-ratio:2.5/3.5;object-fit:cover;background:linear-gradient(135deg,#222840,#161a30)}
-.trending-card-name{font-size:0.68rem;color:var(--muted);text-align:center;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trending-card{flex-shrink:0;width:128px;cursor:pointer;transition:transform 0.2s;position:relative}
+.trending-card:hover{transform:translateY(-6px) scale(1.05)}
+.trending-card-imgwrap{position:relative}
+.trending-card img{width:100%;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.5),0 0 0 1px rgba(255,200,69,0.12);aspect-ratio:2.5/3.5;object-fit:cover;background:linear-gradient(135deg,#222840,#161a30);transition:box-shadow 0.2s}
+.trending-card:hover img{box-shadow:0 8px 28px rgba(255,200,69,0.35),0 0 0 1px rgba(255,200,69,0.4)}
+.trending-rank{position:absolute;top:-8px;left:-8px;width:28px;height:28px;border-radius:50%;background:var(--gradient-gold);color:#0a0c16;font-size:0.78rem;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,0.4);z-index:2;font-family:'Space Grotesk',sans-serif}
+.trending-card-name{font-size:0.7rem;color:var(--muted);text-align:center;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .trending-loading{padding:40px;color:var(--muted);font-size:0.85rem}
-
-@media(max-width:600px){.hero-bgimg img{width:130px}}
-
+@media(max-width:600px){.hero-bgimg img{width:110px}}
 /* ── card tile image wrapper ── */
 .card-tile-imgwrap{position:relative;width:100%;aspect-ratio:2.5/3.5;border-radius:8px;margin-bottom:8px;overflow:hidden;background:linear-gradient(135deg,#222840,#161a30)}
 .card-tile-imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
 .tile-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:0.3}
-
 /* ── box visual (more realistic sealed-box look) ── */
 .box-visual{width:64px;height:64px;border-radius:8px;flex-shrink:0;position:relative;background:linear-gradient(145deg,#1a1f38,#0d1020);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(255,255,255,0.08)}
 .box-visual::before{content:'';position:absolute;top:0;left:0;right:0;height:18px;background:linear-gradient(135deg,var(--gold),#ff8c42);opacity:0.85}
 .box-visual::after{content:'BOX';position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:0.55rem;font-weight:800;color:rgba(255,255,255,0.3);letter-spacing:2px}
 .box-visual span{position:relative;z-index:2;font-size:1.4rem;margin-top:8px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6))}
-
 /* ── oripa code badge ── */
 .oripa-code{background:rgba(255,200,69,0.1);border:1px dashed rgba(255,200,69,0.35);border-radius:8px;padding:8px 12px;font-size:0.74rem;color:var(--gold);margin-bottom:12px}
-
 @media(max-width:600px){.hero-mon{display:none}}
-
 .search-mega{max-width:620px;margin:28px auto 0;position:relative;padding:0 20px}
 .search-input-mega{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px 56px 16px 20px;color:var(--white);font-family:'Noto Sans JP',sans-serif;font-size:0.95rem;outline:none;transition:border-color 0.15s}
 .search-input-mega:focus{border-color:rgba(255,200,69,0.45)}
 .search-icon-btn{position:absolute;right:32px;top:50%;transform:translateY(-50%);background:var(--gradient-gold);border:none;width:38px;height:38px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem}
 .search-hint{font-size:0.72rem;color:var(--muted);margin-top:10px;text-align:center}
-
 .quick-tags{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap;padding:0 20px}
 .qtag{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:0.78rem;color:var(--muted);cursor:pointer;transition:all 0.15s}
 .qtag:hover{border-color:rgba(255,200,69,0.4);color:var(--white)}
-
 /* ── NAV TABS (main sections) ── */
 .maintabs{display:flex;gap:6px;max-width:1100px;margin:32px auto 0;padding:0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .maintabs::-webkit-scrollbar{display:none}
 .maintab{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:0.85rem;cursor:pointer;color:var(--muted);transition:all 0.15s;white-space:nowrap;display:flex;align-items:center;gap:6px;flex-shrink:0}
 .maintab.active{background:#fff;color:#0a0c16;border-color:#fff;font-weight:700}
-
 /* ── FILTER BAR ── */
 .filter-bar{max-width:1100px;margin:20px auto 0;padding:0 20px}
 .filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
 .filter-label{font-size:0.68rem;color:var(--muted);width:100%;margin-bottom:2px;letter-spacing:1px;text-transform:uppercase}
 .chip{background:var(--card);border:1px solid var(--border);border-radius:100px;padding:7px 15px;font-size:0.78rem;cursor:pointer;color:var(--muted);transition:all 0.15s;white-space:nowrap}
 .chip.active{background:var(--gold);color:#0a0c16;border-color:var(--gold);font-weight:700}
-
 .section{max-width:1100px;margin:0 auto;padding:28px 20px}
 .section-title{font-size:1.05rem;font-weight:700;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
 .section-desc{font-size:0.78rem;color:var(--muted);margin-bottom:16px}
 .upd{font-size:0.68rem;color:var(--muted);font-weight:400}
-
 /* ── LOADING ── */
 .loading-inline{text-align:center;padding:40px 20px;color:var(--muted);font-size:0.85rem}
 .spinner{width:28px;height:28px;border:2px solid rgba(255,200,69,0.15);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
-
 /* ── CARD GRID (real card search results with images) ── */
 .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
 .card-tile{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;cursor:pointer;transition:all 0.15s;text-align:center}
@@ -122,7 +116,6 @@ img{max-width:100%}
 .card-tile-jpname{font-size:0.72rem;color:var(--gold);margin-bottom:3px}
 .card-tile-set{font-size:0.68rem;color:var(--muted)}
 .card-tile-rarity{display:inline-block;margin-top:5px;font-size:0.62rem;background:rgba(255,200,69,0.12);color:var(--gold);padding:2px 8px;border-radius:5px}
-
 /* ── RANKING LIST ── */
 .rank-row{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:9px;padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color 0.15s}
 .rank-row:hover{border-color:rgba(255,200,69,0.3)}
@@ -140,9 +133,7 @@ img{max-width:100%}
 .stat-val{font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:700}
 .stat-label{font-size:0.6rem;color:var(--muted)}
 .trend-up{color:var(--green)} .trend-down{color:var(--red)}
-
 .ad-slot{max-width:1100px;margin:20px auto;padding:0 20px}
-
 /* ── BOX SECTION ── */
 .box-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
 .box-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;transition:border-color 0.15s}
@@ -156,7 +147,6 @@ img{max-width:100%}
 .box-price{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;color:var(--gold)}
 .box-meta-row{display:flex;justify-content:space-between;font-size:0.74rem;color:var(--muted);margin-bottom:12px}
 .box-buy-btn{display:block;text-align:center;background:var(--gradient-gold);color:#0a0c16;padding:10px;border-radius:8px;font-size:0.78rem;font-weight:700;text-decoration:none}
-
 /* ── ORIPA SECTION ── */
 .oripa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
 .oripa-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0;overflow:hidden;transition:border-color 0.15s}
@@ -172,7 +162,6 @@ img{max-width:100%}
 .oripa-tag{background:rgba(167,139,250,0.12);color:var(--purple);font-size:0.66rem;padding:3px 9px;border-radius:5px}
 .oripa-desc{font-size:0.78rem;color:#bbb;line-height:1.6;margin-bottom:14px}
 .oripa-btn{display:block;text-align:center;background:var(--gradient-gold);color:#0a0c16;padding:11px;border-radius:8px;font-size:0.85rem;font-weight:700;text-decoration:none}
-
 /* ── SHOP SECTION ── */
 .shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
 .shop-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;transition:border-color 0.15s}
@@ -182,13 +171,10 @@ img{max-width:100%}
 .shop-desc{font-size:0.72rem;color:var(--muted);margin-bottom:14px;line-height:1.5;min-height:32px}
 .shop-btn{display:block;background:var(--card2);border:1px solid var(--border);color:var(--white);padding:9px;border-radius:8px;font-size:0.8rem;font-weight:700;text-decoration:none;transition:all 0.15s}
 .shop-btn:hover{border-color:var(--gold);color:var(--gold)}
-
 /* ── ERA TOP ── */
 .era-block{margin-bottom:28px}
 .era-block-title{font-size:0.95rem;font-weight:700;margin-bottom:10px;color:var(--gold)}
-
 .no-result{text-align:center;padding:60px 20px;color:var(--muted);font-size:0.88rem}
-
 /* ── DETAIL MODAL ── */
 .detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:300;align-items:center;justify-content:center;padding:16px}
 .detail-overlay.active{display:flex}
@@ -211,15 +197,12 @@ img{max-width:100%}
 .aff-link:hover{border-color:rgba(255,200,69,0.4)}
 .aff-link-shop{font-weight:700}
 .aff-link-arrow{color:var(--gold)}
-
 .disclaimer{max-width:1100px;margin:44px auto 64px;padding:0 20px;font-size:0.73rem;color:var(--muted);line-height:1.85;border-top:1px solid var(--border);padding-top:24px}
-
 @media(max-width:600px){.card-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}.rank-stats{gap:8px}.stat-label{display:none}.box-grid,.oripa-grid,.shop-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:420px){.box-grid,.oripa-grid,.shop-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
 <header class="header">
   <div class="logo">ポケカ<em>相場ナビ</em></div>
   <nav class="hnav hnav-mobile-scroll">
@@ -230,7 +213,6 @@ img{max-width:100%}
     <a class="hnav-item" data-main="shop" onclick="showMain('shop')">ショップ</a>
   </nav>
 </header>
-
 <section class="hero" id="hero-section">
   <div class="hero-bgimg" id="hero-bg-images"></div>
   <div class="hero-content">
@@ -252,7 +234,6 @@ img{max-width:100%}
   </div>
   </div>
 </section>
-
 <!-- ═══════ SEARCH RESULTS (directly under hero) ═══════ -->
 <div class="section" id="main-search-section" style="padding-top:12px">
   <div class="section-title">カード検索結果<span class="upd" id="search-upd"></span></div>
@@ -261,7 +242,6 @@ img{max-width:100%}
     <div class="no-result">上の検索欄にカード名を入力するか、クイック検索タグをクリックしてください</div>
   </div>
 </div>
-
 <!-- ═══════ TRENDING CAROUSEL (auto-scrolling popular cards) ═══════ -->
 <div class="trending-wrap" id="trending-section">
   <div class="trending-label">🔥 今、注目されているカード</div>
@@ -269,13 +249,11 @@ img{max-width:100%}
     <div class="trending-track" id="trending-track"></div>
   </div>
 </div>
-
 <!-- AD -->
 <div class="ad-slot">
   <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9815681802683480" data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
   <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
-
 <!-- ═══════ MAIN: RANKING (curated PSA data) ═══════ -->
 <div class="section" id="main-ranking-section" style="display:none">
   <div class="filter-bar" style="padding:0;margin:0 0 20px">
@@ -305,7 +283,6 @@ img{max-width:100%}
   <div id="r-market" style="display:none"><div class="section-title">注目カードの国内・海外相場<span class="upd" id="upd-market"></span></div><div id="market-list"></div></div>
   <div id="r-era" style="display:none"><div class="section-title">世代別 人気カードTOP5</div><div id="era-list"></div></div>
 </div>
-
 <!-- ═══════ MAIN: BOX ═══════ -->
 <div class="section" id="main-box-section" style="display:none">
   <div class="section-title">BOX相場情報<span class="upd" id="upd-box"></span></div>
@@ -327,7 +304,6 @@ img{max-width:100%}
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 </div>
-
 <!-- ═══════ MAIN: ORIPA ═══════ -->
 <div class="section" id="main-oripa-section" style="display:none">
   <div class="section-title">オンラインオリパ ランキング<span class="upd" id="upd-oripa"></span></div>
@@ -338,16 +314,17 @@ img{max-width:100%}
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
 </div>
-
 <!-- ═══════ MAIN: SHOP ═══════ -->
 <div class="section" id="main-shop-section" style="display:none">
   <div class="section-title">ポケカ販売ショップ一覧</div>
   <div class="section-desc">国内主要オンラインカードショップ・フリマ・オークションをまとめています。リンクからの購入で当サイトに紹介料が入る場合があります。</div>
   <div class="shop-grid" id="shop-list"></div>
+  <div class="ad-slot" style="padding:12px;margin-top:16px;text-align:center">
+    <div style="font-size:11px;color:#888;margin-bottom:6px">PR</div>
+    <script language="javascript" src="//ad.jp.ap.valuecommerce.com/servlet/jsbanner?sid=3773849&pid=892640660"></script><noscript><a href="//ck.jp.ap.valuecommerce.com/servlet/referral?sid=3773849&pid=892640660" rel="nofollow"><img src="//ad.jp.ap.valuecommerce.com/servlet/gifbanner?sid=3773849&pid=892640660" border="0"></a></noscript>
+  </div>
 </div>
-
 <div class="disclaimer" id="disclaimer-text"></div>
-
 <!-- DETAIL MODAL -->
 <div class="detail-overlay" id="detail-overlay" onclick="if(event.target===this)closeDetail()">
   <div class="detail-modal">
@@ -367,7 +344,9 @@ img{max-width:100%}
     </div>
   </div>
 </div>
-
+<!-- A8.net インプレッション計測タグ（メルカリ／おりパンダ） -->
+<img border="0" width="1" height="1" src="https://www17.a8.net/0.gif?a8mat=4B60CF+4DRZ6A+5LNQ+5YJRM" alt="" style="position:absolute">
+<img border="0" width="1" height="1" src="https://www11.a8.net/0.gif?a8mat=4B60CF+6IKW7M+5U64+5YJRM" alt="" style="position:absolute">
 <script src="data.js"></script>
 <script src="app.js"></script>
 </body>
