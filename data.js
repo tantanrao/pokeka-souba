@@ -7,6 +7,26 @@ const UPDATE_DATE = '2026年6月18日';
 const RAKUTEN_AFF_ID = 'YOUR_RAKUTEN_AFFILIATE_ID';
 const AMAZON_TAG = 'YOUR_AMAZON_TAG';
 
+// メルカリ：アクセストレード(https://www.accesstrade.ne.jp/)で「メルカリ」案件に提携可能（2026年時点）。
+// 提携後、リンク作成ツールで生成された自分のアフィリエイトURLを下記にコピペしてください。
+// 検索キーワードを差し込みたい場所に "{KEYWORD}" と書いておけば自動で置き換わります。
+// 例: 'https://px.a8.net/svt/ejp?a8mat=XXXXXX&a8ejpredirect=https%3A%2F%2Fjp.mercari.com%2Fsearch%3Fkeyword%3D{KEYWORD}'
+const MERCARI_AFF_TEMPLATE = '';
+
+// SNKRDUNK（スニダン）：バリューコマース or A8.netで提携可能。提携後、同様に生成リンクを貼ってください。
+const SNKRDUNK_AFF_TEMPLATE = '';
+
+// ヤフオク：2015年にYahoo!アフィリエイトが終了、2016年3月末にバリューコマース経由の提携も終了し、
+// 現在ヤフオク単体のアフィリエイトプログラムは存在しません（Yahoo!ショッピングとは別物）。
+// そのため下記は素の検索リンク（送客のみ・収益化なし）として設置しています。
+const YAHOO_AUCTION_NOTE = '※ヤフオクは現在アフィリエイト提携不可（2016年終了）。送客リンクのみ';
+
+// アフィリエイトテンプレートにキーワードを差し込む共通関数。テンプレート未設定なら通常リンクにフォールバック。
+function affLink(template, fallbackUrl, keyword){
+  if(!template) return fallbackUrl;
+  return template.replace('{KEYWORD}', encodeURIComponent(keyword));
+}
+
 // ── PSA鑑定ランキングデータ ──
 // gem_rate: PSA10になる確率(%) / bad_rate: PSA6以下になる確率(%) / trades_30d: 直近30日の取引件数(参考)
 const cards = [
@@ -119,7 +139,8 @@ const shops = [
   {name:'楽天市場 ポケカ専門店', emoji:'🛍️', desc:'楽天市場内の人気ポケカショップをまとめて検索。', url:null, rakutenQ:'ポケモンカード'},
   {name:'Amazon ポケカストア', emoji:'📦', desc:'Amazon直送・プライム対応のポケカ商品を検索。', url:null, rakutenQ:null, amazon:true},
   {name:'ヤフオク！', emoji:'🔨', desc:'オークション形式で希少カードを探せる。', url:'https://auctions.yahoo.co.jp/category/list/2084048363/', rakutenQ:null},
-  {name:'メルカリ', emoji:'📱', desc:'フリマアプリで個人出品のカードを探せる。', url:'https://jp.mercari.com/search?keyword=ポケモンカード', rakutenQ:null},
+  {name:'メルカリ', emoji:'📱', desc:'フリマアプリで個人出品のカードを探せる。', url:'https://jp.mercari.com/search?keyword=ポケモンカード', rakutenQ:null, mercari:true},
+  {name:'SNKRDUNK（スニダン）', emoji:'👟', desc:'鑑定・全額補償付きで安心して売買できるフリマアプリ。トレカ専門コーナーも充実。', url:'https://snkrdunk.com/search?keywords=ポケモンカード&brandIds=pokemon', rakutenQ:null, snkrdunk:true},
 ];
 
 const disclaimerText = `※ 「カード検索」結果は外部の公開カードデータベース（Pokémon TCG API）と連携して表示しています。検索結果の正確性は当該データベースに依存します。<br>
