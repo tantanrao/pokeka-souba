@@ -7,11 +7,9 @@ const UPDATE_DATE = '2026年6月18日';
 const RAKUTEN_AFF_ID = 'YOUR_RAKUTEN_AFFILIATE_ID';
 const AMAZON_TAG = 'YOUR_AMAZON_TAG';
 
-// メルカリ：アクセストレード(https://www.accesstrade.ne.jp/)で「メルカリ」案件に提携可能（2026年時点）。
-// 提携後、リンク作成ツールで生成された自分のアフィリエイトURLを下記にコピペしてください。
-// 検索キーワードを差し込みたい場所に "{KEYWORD}" と書いておけば自動で置き換わります。
-// 例: 'https://px.a8.net/svt/ejp?a8mat=XXXXXX&a8ejpredirect=https%3A%2F%2Fjp.mercari.com%2Fsearch%3Fkeyword%3D{KEYWORD}'
-const MERCARI_AFF_TEMPLATE = '';
+// メルカリ：A8.net「メルカリアンバサダー」提携済み（2026年6月20日提携、テキストリンク）。
+// このリンクは検索キーワードを指定できないタイプのため、常にメルカリのトップ/紹介ページに遷移します。
+const MERCARI_AFF_TEMPLATE = 'https://px.a8.net/svt/ejp?a8mat=4B60CF+4DRZ6A+5LNQ+5YJRM';
 
 // SNKRDUNK（スニダン）：バリューコマース or A8.netで提携可能。提携後、同様に生成リンクを貼ってください。
 const SNKRDUNK_AFF_TEMPLATE = '';
@@ -120,12 +118,14 @@ const boxEraNames = {classic:'第1世代', xy:'XY期', sm:'SM期', sword:'S&S期
 
 // ── オンラインオリパ（実在サービス）──
 // ★各社の招待コード・アフィリエイトリンクは公式パートナープログラムへの申請が必要です
+// 「おりパンダ」はA8.net提携済み（2026年6月20日提携、テキストリンク）。広告主表記としてtagsに"PR"を付与しています。
 const oripas = [
-  {id:1, rank:1, name:'DOPA！', emoji:'🎴', rating:4.7, reviews:'11万人+フォロワー', tags:['業界最大手','還元率トップクラス','SNS当選報告No.1'], desc:'株式会社sinsa運営。会員数100万人超の業界最大級オンラインオリパ。高還元率ガチャが豊富でSNSでの当選報告も圧倒的に多い。', url:'https://dopa-place.com/', code:'招待コードあり（公式サイト参照）'},
-  {id:2, rank:2, name:'日本トレカセンター', emoji:'🎯', rating:4.5, reviews:'発送速度No.1評価', tags:['発送が早い','カジサック起用','初心者向け'], desc:'当日出荷も多く、発送スピードに定評がある大手オリパサイト。口数も比較的少なく初心者でも始めやすい。', url:'https://japan-toreca.com/', code:'登録特典あり（公式サイト参照）'},
-  {id:3, rank:3, name:'オリパワン', emoji:'💎', rating:4.4, reviews:'還元率業界TOP級', tags:['還元率が高い','安定感重視'], desc:'還元率の高さで定評のあるオリパサービス。安定感を重視する利用者から支持されている。', url:'#', code:'公式サイト参照'},
-  {id:4, rank:4, name:'カードラッシュオリパ', emoji:'🛒', rating:4.3, reviews:'実店舗運営の安心感', tags:['大手カードショップ運営','実店舗あり'], desc:'実店舗を持つ大手カードショップ「カードラッシュ」が運営。信頼性を重視する人に向いている。', url:'https://www.cardrush-pokemon.jp/', code:''},
-  {id:5, rank:5, name:'Cloveオリパ', emoji:'🍀', rating:4.1, reviews:'人気上昇中', tags:['新興サービス','話題性あり'], desc:'比較的新しいオンラインオリパサービスだが口コミでの評価が伸びている。', url:'#', code:''},
+  {id:6, rank:1, name:'おりパンダ', emoji:'🐼', rating:4.6, reviews:'新規会員登録で最大90%OFF特典', tags:['PR','還元大盤・特典あり','1coinから引ける'], desc:'Pandaverse株式会社運営。リリース記念で還元・特典を強化中のオンラインオリパ。1coinから引けるガチャもあり、新規会員登録特典が充実。', url:'https://px.a8.net/svt/ejp?a8mat=4B60CF+6IKW7M+5U64+5YJRM', code:'新規会員登録で最大90%OFF（公式サイト参照）'},
+  {id:1, rank:2, name:'DOPA！', emoji:'🎴', rating:4.7, reviews:'11万人+フォロワー', tags:['業界最大手','還元率トップクラス','SNS当選報告No.1'], desc:'株式会社sinsa運営。会員数100万人超の業界最大級オンラインオリパ。高還元率ガチャが豊富でSNSでの当選報告も圧倒的に多い。', url:'https://dopa-place.com/', code:'招待コードあり（公式サイト参照）'},
+  {id:2, rank:3, name:'日本トレカセンター', emoji:'🎯', rating:4.5, reviews:'発送速度No.1評価', tags:['発送が早い','カジサック起用','初心者向け'], desc:'当日出荷も多く、発送スピードに定評がある大手オリパサイト。口数も比較的少なく初心者でも始めやすい。', url:'https://japan-toreca.com/', code:'登録特典あり（公式サイト参照）'},
+  {id:3, rank:4, name:'オリパワン', emoji:'💎', rating:4.4, reviews:'還元率業界TOP級', tags:['還元率が高い','安定感重視'], desc:'還元率の高さで定評のあるオリパサービス。安定感を重視する利用者から支持されている。', url:'#', code:'公式サイト参照'},
+  {id:4, rank:5, name:'カードラッシュオリパ', emoji:'🛒', rating:4.3, reviews:'実店舗運営の安心感', tags:['大手カードショップ運営','実店舗あり'], desc:'実店舗を持つ大手カードショップ「カードラッシュ」が運営。信頼性を重視する人に向いている。', url:'https://www.cardrush-pokemon.jp/', code:''},
+  {id:5, rank:6, name:'Cloveオリパ', emoji:'🍀', rating:4.1, reviews:'人気上昇中', tags:['新興サービス','話題性あり'], desc:'比較的新しいオンラインオリパサービスだが口コミでの評価が伸びている。', url:'#', code:''},
 ];
 
 // ── ショップ一覧（楽天市場内の店舗は楽天アフィリエイト経由にすると収益化できる）──
