@@ -94,26 +94,51 @@ async function doRealSearch(){
   const rawQ = document.getElementById('main-search').value.trim();
   if(!rawQ){ document.getElementById('search-results').innerHTML = '<div class="no-result">カード名を入力してください</div>'; return; }
 
-  const q = translateQuery(rawQ);
   document.getElementById('search-results').innerHTML = '<div class="loading-inline"><div class="spinner"></div>カードデータベースを検索中...</div>';
   document.getElementById('search-upd').textContent = '';
   document.getElementById('search-results').scrollIntoView({behavior:'smooth', block:'start'});
 
+  // カード番号検索パターン判定（例: 25/102, sv1-25, base1-4 など）
+  const isCardNumber = /^[a-zA-Z0-9]+[-\/][a-zA-Z0-9]+$/.test(rawQ);
+
   try {
-    const url = `https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(q)}*&pageSize=60&orderBy=-set.releaseDate`;
-    const res = await fetch(url);
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    let results = data.data || [];
-    if(results.length === 0){
-      const url2 = `https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(q)}&pageSize=60`;
-      const res2 = await fetch(url2);
-      if(res2.ok){
-        const data2 = await res2.json();
-        results = data2.data || [];
+    let results = [];
+    if(isCardNumber){
+      // セットID-番号形式 or 番号/総数形式
+      let url;
+      if(rawQ.includes('-')){
+        url = `https://api.pokemontcg.io/v2/cards/${encodeURIComponent(rawQ)}`;
+        const res = await fetch(url);
+        if(res.ok){
+          const data = await res.json();
+          if(data.data) results = [data.data];
+        }
+      } else {
+        const num = rawQ.split('/')[0];
+        url = `https://api.pokemontcg.io/v2/cards?q=number:${encodeURIComponent(num)}&pageSize=60`;
+        const res = await fetch(url);
+        if(res.ok){
+          const data = await res.json();
+          results = data.data || [];
+        }
+      }
+    } else {
+      const q = translateQuery(rawQ);
+      const url = `https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(q)}*&pageSize=60&orderBy=-set.releaseDate`;
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      results = data.data || [];
+      if(results.length === 0){
+        const url2 = `https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(q)}&pageSize=60`;
+        const res2 = await fetch(url2);
+        if(res2.ok){
+          const data2 = await res2.json();
+          results = data2.data || [];
+        }
       }
     }
-    renderSearchResults(results, rawQ, q);
+    renderSearchResults(results, rawQ);
   } catch(e){
     console.error('Search error:', e);
     document.getElementById('search-results').innerHTML = `<div class="no-result">検索中にエラーが発生しました。少し時間をおいて再度お試しください。<br><span style="font-size:0.72rem;color:#666">(${e.message})</span></div>`;
@@ -122,15 +147,16 @@ async function doRealSearch(){
 
 function renderSearchResults(results, query){
   if(results.length===0){
-    document.getElementById('search-results').innerHTML = `<div class="no-result">「${query}」に一致するカードが見つかりませんでした。英語名（例：Charizard, Pikachu, Rayquaza）でお試しください。</div>`;
+    document.getElementById('search-results').innerHTML = `<div class="no-result">「${query}」に一致するカードが見つかりませんでした。英語名（例：Charizard, Pikachu, Rayquaza）やカード番号（例：sv1-25）でもお試しください。<br><span style="font-size:0.72rem;color:#666;margin-top:8px;display:block">※日本語版カードの画像データベースは現在対応しておらず、英語版（北米版）カードを表示しています。</span></div>`;
     return;
   }
-  document.getElementById('search-upd').textContent = `${results.length}件のカードが見つかりました`;
+  document.getElementById('search-upd').textContent = `${results.length}件のカードが見つかりました（英語版カードデータベース）`;
   window._searchCache = results;
   document.getElementById('search-results').innerHTML = `<div class="card-grid">` + results.map((c,i)=>{
     const img = c.images && c.images.small ? c.images.small : '';
     const setName = c.set ? c.set.name : '';
     const rarity = c.rarity || '';
+    const jpName = findJpName(c.name);
     const imgHtml = img
       ? `<img src="${img}" alt="${c.name}" loading="lazy" onerror="this.parentElement.querySelector('.tile-placeholder').style.display='flex';this.style.display='none'">`
       : '';
@@ -140,6 +166,7 @@ function renderSearchResults(results, query){
         <div class="tile-placeholder" style="display:${img?'none':'flex'}">🎴</div>
       </div>
       <div class="card-tile-name">${c.name}</div>
+      ${jpName ? `<div class="card-tile-jpname">${jpName}</div>` : ''}
       <div class="card-tile-set">${setName}</div>
       ${rarity?`<div class="card-tile-rarity">${rarity}</div>`:''}
     </div>`;
@@ -166,6 +193,41 @@ function openRealCardDetail(idx){
   const q = encodeURIComponent(c.name);
   document.getElementById('d-affiliate').innerHTML = buildAffiliateLinks(q);
   document.getElementById('detail-overlay').classList.add('active');
+}
+
+// PSAランキングカードの画像キャッシュ（curated cards用）
+window._curatedImgCache = {};
+
+async function fetchCuratedImage(card){
+  if(window._curatedImgCache[card.id]) return window._curatedImgCache[card.id];
+  // カード名からポケモン名部分を抽出して英語に変換
+  const baseName = card.name.replace(/\(.+?\)/g,'').trim();
+  let enName = null;
+  for(const jp in jpToEn){
+    if(baseName.includes(jp)){ enName = jpToEn[jp]; break; }
+  }
+  if(!enName) return null;
+  try {
+    const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:${enName}&pageSize=1&orderBy=-set.releaseDate`);
+    if(!res.ok) return null;
+    const data = await res.json();
+    if(data.data && data.data[0] && data.data[0].images){
+      window._curatedImgCache[card.id] = data.data[0].images.small;
+      return data.data[0].images.small;
+    }
+  } catch(e){ console.error(e); }
+  return null;
+}
+
+async function loadCuratedThumbs(){
+  const filtered = getFiltered();
+  for(const c of filtered){
+    const img = await fetchCuratedImage(c);
+    if(img){
+      const els = document.querySelectorAll(`.rank-thumb[data-card-id="${c.id}"]`);
+      els.forEach(el => { el.innerHTML = `<img src="${img}" alt="${c.name}" loading="lazy">`; });
+    }
+  }
 }
 
 function getFiltered(){ return cards.filter(c => currentEra==='all'||c.era===currentEra); }
@@ -203,7 +265,7 @@ function renderRanking(){
     const mainVal = cfg.fmt(c[cfg.sortKey]);
     return `<div class="rank-row" onclick="openCuratedDetail(${c.id})">
       <div class="rank-num ${rankClass}">${i+1}</div>
-      <div class="rank-thumb">${c.emoji}</div>
+      <div class="rank-thumb" data-card-id="${c.id}">${c.emoji}</div>
       <div class="rank-info">
         <div class="rank-name">${c.name}</div>
         <div class="rank-meta">${c.set}<span class="era-tag">${eraNames[c.era].split('（')[0]}</span></div>
@@ -214,6 +276,7 @@ function renderRanking(){
       </div>
     </div>`;
   }).join('');
+  loadCuratedThumbs();
 }
 
 function renderEra(){
@@ -271,6 +334,14 @@ function openCuratedDetail(id){
   const q = encodeURIComponent(c.name.replace(/\(.+?\)/g,'').trim());
   document.getElementById('d-affiliate').innerHTML = buildAffiliateLinks(q);
   document.getElementById('detail-overlay').classList.add('active');
+
+  // 実画像を非同期で取得して表示
+  fetchCuratedImage(c).then(img=>{
+    if(img){
+      document.getElementById('d-img').src = img;
+      document.getElementById('d-img').style.display='inline';
+    }
+  });
 }
 
 function closeDetail(){
@@ -281,13 +352,19 @@ function closeDetail(){
 function buildAffiliateLinks(q){
   return `
     <a class="aff-link" href="https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFF_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F${q}%2F" target="_blank" rel="noopener sponsored">
-      <span class="aff-link-shop">楽天市場で探す</span><span class="aff-link-arrow">→</span>
+      <span class="aff-link-shop">🛍️ 楽天市場で探す</span><span class="aff-link-arrow">→</span>
     </a>
     <a class="aff-link" href="https://www.amazon.co.jp/s?k=${q}&tag=${AMAZON_TAG}" target="_blank" rel="noopener sponsored">
-      <span class="aff-link-shop">Amazonで探す</span><span class="aff-link-arrow">→</span>
+      <span class="aff-link-shop">📦 Amazonで探す</span><span class="aff-link-arrow">→</span>
     </a>
     <a class="aff-link" href="https://www.cardrush-pokemon.jp/product-list?keyword=${q}" target="_blank" rel="noopener sponsored">
-      <span class="aff-link-shop">カードラッシュで探す</span><span class="aff-link-arrow">→</span>
+      <span class="aff-link-shop">🃏 カードラッシュで探す</span><span class="aff-link-arrow">→</span>
+    </a>
+    <a class="aff-link" href="https://auctions.yahoo.co.jp/search/search?p=${q}" target="_blank" rel="noopener sponsored">
+      <span class="aff-link-shop">🔨 ヤフオク！で探す</span><span class="aff-link-arrow">→</span>
+    </a>
+    <a class="aff-link" href="https://jp.mercari.com/search?keyword=${q}" target="_blank" rel="noopener sponsored">
+      <span class="aff-link-shop">📱 メルカリで探す</span><span class="aff-link-arrow">→</span>
     </a>`;
 }
 
@@ -309,7 +386,10 @@ function renderBox(){
       </div>
       <div class="box-price-row"><span class="box-price-label">参考価格</span><span class="box-price">${fmtJPY(b.price)}</span></div>
       <div class="box-meta-row"><span>${b.perBox}</span></div>
-      <a class="box-buy-btn" href="https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFF_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F${encodeURIComponent(b.rakutenQ)}%2F" target="_blank" rel="noopener sponsored">楽天市場で探す →</a>
+      <div style="display:flex;gap:8px">
+        <a class="box-buy-btn" style="flex:1" href="https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFF_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F${encodeURIComponent(b.rakutenQ)}%2F" target="_blank" rel="noopener sponsored">楽天で探す</a>
+        <a class="box-buy-btn" style="flex:1;background:linear-gradient(135deg,#232f3e,#37475a)" href="https://www.amazon.co.jp/s?k=${encodeURIComponent(b.rakutenQ)}&tag=${AMAZON_TAG}" target="_blank" rel="noopener sponsored">Amazonで探す</a>
+      </div>
     </div>`).join('');
 }
 
@@ -334,13 +414,20 @@ function renderOripa(){
 }
 
 function renderShop(){
-  document.getElementById('shop-list').innerHTML = shops.map(s=>`
-    <div class="shop-card">
+  document.getElementById('shop-list').innerHTML = shops.map(s=>{
+    let url = s.url;
+    if(s.rakutenQ){
+      url = `https://hb.afl.rakuten.co.jp/hgc/${RAKUTEN_AFF_ID}/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2F${encodeURIComponent(s.rakutenQ)}%2F`;
+    } else if(s.amazon){
+      url = `https://www.amazon.co.jp/s?k=${encodeURIComponent('ポケモンカード')}&tag=${AMAZON_TAG}`;
+    }
+    return `<div class="shop-card">
       <div class="shop-logo">${s.emoji}</div>
       <div class="shop-name">${s.name}</div>
       <div class="shop-desc">${s.desc}</div>
-      <a class="shop-btn" href="${s.url}" target="_blank" rel="noopener sponsored">サイトを見る →</a>
-    </div>`).join('');
+      <a class="shop-btn" href="${url}" target="_blank" rel="noopener sponsored">サイトを見る →</a>
+    </div>`;
+  }).join('');
 }
 
 document.getElementById('main-search').addEventListener('keydown', e=>{ if(e.key==='Enter') doRealSearch(); });
