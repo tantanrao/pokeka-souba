@@ -108,15 +108,18 @@ const oripas = [
   {id:5, rank:5, name:'Cloveオリパ', emoji:'🍀', rating:4.1, reviews:'人気上昇中', tags:['新興サービス','話題性あり'], desc:'比較的新しいオンラインオリパサービスだが口コミでの評価が伸びている。', url:'#', code:''},
 ];
 
+// ── ショップ一覧（楽天市場内の店舗は楽天アフィリエイト経由にすると収益化できる）──
 const shops = [
-  {name:'カードラッシュ', emoji:'🛒', desc:'業界大手のカード専門店。買取・販売ともに実績豊富。', url:'https://www.cardrush-pokemon.jp/'},
-  {name:'駿河屋', emoji:'📚', desc:'中古ホビー全般を扱う大手。ポケカも幅広く取り扱い。', url:'https://www.suruga-ya.jp/'},
-  {name:'トレファクスポーツ', emoji:'⚡', desc:'トレーディングカード専門の買取・販売チェーン。', url:'https://www.trefac.jp/'},
-  {name:'晴れる屋', emoji:'☀️', desc:'TCG専門店の老舗。高額カードの取り扱いも多い。', url:'https://hareruyamtg.com/'},
-  {name:'ホビーステーション', emoji:'🎮', desc:'全国展開のホビーショップ。オンライン販売も充実。', url:'https://www.hbst.jp/'},
-  {name:'カードショップ ビート', emoji:'💚', desc:'ポケカ専門の買取・販売店。秋葉原系の有名店。', url:'#'},
-  {name:'晴れる屋2', emoji:'🌤️', desc:'晴れる屋系列のオンラインショップ。', url:'#'},
-  {name:'イエローサブマリン', emoji:'🚢', desc:'ホビー・カード全般を扱う大手チェーン。', url:'https://yellowsubmarine.co.jp/'},
+  {name:'カードラッシュ', emoji:'🛒', desc:'業界大手のカード専門店。買取・販売ともに実績豊富。', url:'https://www.cardrush-pokemon.jp/', rakutenQ:null},
+  {name:'駿河屋', emoji:'📚', desc:'中古ホビー全般を扱う大手。ポケカも幅広く取り扱い。', url:'https://www.suruga-ya.jp/', rakutenQ:'駿河屋 ポケモンカード'},
+  {name:'トレファクスポーツ', emoji:'⚡', desc:'トレーディングカード専門の買取・販売チェーン。', url:'https://www.trefac.jp/', rakutenQ:null},
+  {name:'晴れる屋', emoji:'☀️', desc:'TCG専門店の老舗。高額カードの取り扱いも多い。', url:'https://hareruyamtg.com/', rakutenQ:null},
+  {name:'ホビーステーション', emoji:'🎮', desc:'全国展開のホビーショップ。オンライン販売も充実。', url:'https://www.hbst.jp/', rakutenQ:'ホビーステーション ポケモンカード'},
+  {name:'イエローサブマリン', emoji:'🚢', desc:'ホビー・カード全般を扱う大手チェーン。', url:'https://yellowsubmarine.co.jp/', rakutenQ:'イエローサブマリン ポケモンカード'},
+  {name:'楽天市場 ポケカ専門店', emoji:'🛍️', desc:'楽天市場内の人気ポケカショップをまとめて検索。', url:null, rakutenQ:'ポケモンカード'},
+  {name:'Amazon ポケカストア', emoji:'📦', desc:'Amazon直送・プライム対応のポケカ商品を検索。', url:null, rakutenQ:null, amazon:true},
+  {name:'ヤフオク！', emoji:'🔨', desc:'オークション形式で希少カードを探せる。', url:'https://auctions.yahoo.co.jp/category/list/2084048363/', rakutenQ:null},
+  {name:'メルカリ', emoji:'📱', desc:'フリマアプリで個人出品のカードを探せる。', url:'https://jp.mercari.com/search?keyword=ポケモンカード', rakutenQ:null},
 ];
 
 const disclaimerText = `※ 「カード検索」結果は外部の公開カードデータベース（Pokémon TCG API）と連携して表示しています。検索結果の正確性は当該データベースに依存します。<br>
@@ -157,4 +160,13 @@ function translateQuery(q){
     if(q.includes(key)) return jpToEn[key];
   }
   return q; // 辞書にない場合はそのまま（英語入力等）
+}
+
+// 英語名 → 日本語名 逆引き（カード名表示の補助用）
+const enToJp = Object.fromEntries(Object.entries(jpToEn).map(([jp,en])=>[en,jp]));
+function findJpName(enName){
+  for(const en in enToJp){
+    if(enName.includes(en)) return enToJp[en];
+  }
+  return null;
 }
